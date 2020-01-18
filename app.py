@@ -47,7 +47,7 @@ questions = [
     {
         'file': '7.png',
         'answers': ['fedora pagure', 'pagure'],
-        'query': 'Don\t. Be. Like. A. Snail. Answer. Quickly.',
+        'query': 'Don\'t. Be. Like. A. Snail. Answer. Quickly.',
         'hint': 'Github but good'
     },
     {
@@ -84,8 +84,7 @@ def index():
     print(current_qid)
     if current_qid>=len(questions):
         session['qid'] = 0
-        return 'Game Finished'
-        return render_template('complete.html')
+        return render_template("game_completed.html")
     return render_template("show_question.html", qid=current_qid+1, image_path=questions[current_qid]['file'], query_text=questions[current_qid]['query'], correct_answers=questions[current_qid]['answers'], hint=questions[current_qid]['hint'])
 
 @app.route('/next_question')
