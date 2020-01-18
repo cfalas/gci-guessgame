@@ -86,7 +86,7 @@ def index():
         session['qid'] = 0
         return 'Game Finished'
         return render_template('complete.html')
-    return render_template("show_question.html", image_path=questions[current_qid]['file'], query_text=questions[current_qid]['query'], correct_answers=questions[current_qid]['answers'], hint=questions[current_qid]['hint'])
+    return render_template("show_question.html", qid=current_qid+1, image_path=questions[current_qid]['file'], query_text=questions[current_qid]['query'], correct_answers=questions[current_qid]['answers'], hint=questions[current_qid]['hint'])
 
 @app.route('/next_question')
 def next_question():
