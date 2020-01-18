@@ -1,7 +1,8 @@
 from flask import Flask, session, send_from_directory, render_template
 from flask_session import Session
 app = Flask(__name__)
-SESSION_TYPE = 'redis'
+SESSION_TYPE = 'sqlalchemy'
+app.secret_key = os.urandom(24)
 app.config.from_object(__name__)
 Session(app)
 
