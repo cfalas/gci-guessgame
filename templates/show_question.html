@@ -214,7 +214,7 @@
                         document.getElementById('overlay').style.opacity = '0';
                         document.getElementById('overlay').style.visibility = 'hidden';
                         setTimeout(function () {
-                            $.ajax({'url': "http://localhost:5000/next_question", success: function(response){
+                            $.ajax({'url': "/next_question", success: function(response){
                                 window.location.reload(true); 
                             }});
                         }, 500);
