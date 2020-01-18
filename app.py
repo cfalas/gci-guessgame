@@ -2,7 +2,7 @@ from flask import Flask, session, send_from_directory, render_template
 from flask_session import Session
 import os
 app = Flask(__name__)
-SESSION_TYPE = 'sqlalchemy'
+SESSION_TYPE = 'filesystem'
 app.secret_key = os.urandom(24)
 app.config.from_object(__name__)
 Session(app)
