@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Wildcard guess game</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+      
+        <!-- Compiled and minified JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <style>
+            html{
+                text-align: center;
+                margin: 0;
+                padding: 0;
+            }
+            body{
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                margin: 0;
+                background: linear-gradient(to right, #5cff00 0%, #5cff00 50%, #fff 50%, #fff 100%);
+                background-size: 200%, 200%;
+
+                -webkit-animation: Animation 30s linear forwards;
+                -moz-animation: Animation 30s linear forwards;
+                animation: Animation 30s linear forwards;
+            }
+            #overlay {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 100%;
+                width: 100%;
+                transition: 1s ease;
+                visibility: hidden;
+                z-index: 100;
+            }
+
+            @-webkit-keyframes Animation {
+                0%{background-position:0% 0%;}
+                100%{background-position:100% 100%;}
+            }
+            @-moz-keyframes Animation {
+                0%{background-position:0% 0%;}
+                100%{background-position:100% 100%;}
+            }
+            @keyframes Animation { 
+                0%{background-position:0% 0%;}
+                100%{background-position:100% 100%;}
+            }
+            img{
+                height: 50vh;
+                margin: 0 auto;
+            }
+            .popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* The actual popup (appears on top) */
+.popup .popuptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+}
+
+/* Popup arrow */
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
+
+
+
+        </style>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+    <body>
+        <div id="overlay"></div>
+
+        <div class="row">
+            <div class="col s12 m10 offset-m1 l8 offset-l2">
+              <div class="card">
+                <div class="card-imag">
+                    <img src='images/{{ image_path }}'>
+                </div>
+
+        
+
+                <div class="card-content">
+                    <h2>{{ query_text }}</h2>
+                    <div class='row'>
+                    <div class="input-field col s6 m4 l4 offset-s6 offset-m4 offset-l4">
+                        <input placeholder="Enter your answer here" id="answer" type="text" class="validate" autofocus>
+                        <label style='color: black' for="answer">Answer</label>
+                    </div>
+                    <div class="col popup" onclick="myFunction()">  <i class="material-icons">help_outline</i>
+                        <span class="popuptext" id="myPopup">{{ hint}}</span>
+                    </div>
+                </div>
+                    </div>
+                <div class="card-action">
+                  <a onclick="check()">Submit</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <p id='timer'>15s</p>
+          <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4>Time's Up!</h4>
+      <p>You didn't successfuly complete the quiz. You need to start over</p>
+    </div>
+    <div class="modal-footer">
+      <a onclick="start_over()" class="modal-close waves-effect waves-green btn-flat">Start Over</a>
+    </div>
+  </div>
+ 
+        <script>
+            var countDownDate = new Date();
+            countDownDate = new Date(countDownDate.getTime() + 30 * 1000);
+            
+            var x = setInterval(function() {
+            
+                var now = new Date().getTime();
+            
+                var distance = countDownDate - now;
+            
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+                document.getElementById("timer").innerHTML = "Time Left: " + seconds + "s ";
+                if (distance <= 0) {
+                    clearInterval(x);
+                    document.getElementById("timer").innerHTML = "Time's Up";
+                    $('.modal').modal({
+                        dismissible: false
+                    });
+                    $('.modal').modal('open');
+                    $.ajax('/game_over')
+                }
+            }, 100);
+      </script>
+      <script>
+        document.getElementById("answer").addEventListener("keyup", function(event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                check();
+            }
+        });
+
+        function check() {
+            str = document.getElementById('answer').value.toLowerCase()
+            correct = false
+            {% for i in correct_answers %}
+                if(str=='{{ i }}'){
+                    document.getElementById('overlay').style.backgroundColor = 'green';
+                    document.getElementById('overlay').style.visibility = 'visible';
+                    document.getElementById('overlay').style.opacity = '1';
+                    correct = true;
+                }
+            {% endfor %}
+            if(correct==false){
+                document.getElementById('overlay').style.backgroundColor = 'red';
+                document.getElementById('overlay').style.visibility = 'visible';
+                document.getElementById('overlay').style.opacity = '1';
+                setTimeout(function () {
+                    document.getElementById('overlay').style.opacity = '0';
+                    document.getElementById('overlay').style.visibility = 'hidden';
+                }, 800);
+            }
+            else{
+                setTimeout(function () {
+                        document.getElementById('overlay').style.opacity = '0';
+                        document.getElementById('overlay').style.visibility = 'hidden';
+                        setTimeout(function () {
+                            $.ajax({'url': "http://localhost:5000/next_question", success: function(response){
+                                window.location.reload(true); 
+                            }});
+                        }, 500);
+                    }, 800);
+            }
+        }   
+        function start_over(){
+            window.location.reload(true);
+        }
+      </script>
+            <script>
+                // When the user clicks on <div>, open the popup
+                function myFunction() {
+                  var popup = document.getElementById("myPopup");
+                  popup.classList.toggle("show");
+                }
+                </script>
+                
+    </body>
+</html>
