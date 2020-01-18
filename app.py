@@ -1,5 +1,6 @@
 from flask import Flask, session, send_from_directory, render_template
 from flask_session import Session
+import os
 app = Flask(__name__)
 SESSION_TYPE = 'sqlalchemy'
 app.secret_key = os.urandom(24)
